@@ -3,12 +3,15 @@ from discord.ext import commands
 
 logger=logging.getLogger(__name__)
 
-settings = {"user_emojis": dict, "reaction_roles": list}
+settings = {"user_emojis": dict, "reaction_roles": list, "slowmode_roles": list}
 
-class boot(commands.Cog):
+#COMMANDS
+
+
+class bootFunctions(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-    
+
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         self.settings_handler()
@@ -19,7 +22,6 @@ class boot(commands.Cog):
         self.settings_handler()
 
         logger.info("Bot has started up!!")
-        await self.bot.tree.sync()
 
     def settings_handler(self):
         for guild in self.bot.guilds:
@@ -43,7 +45,5 @@ class boot(commands.Cog):
             with open(path, "w") as f:
                 json.dump(data, f, indent=4)
 
-
-
 async def setup(bot):
-    await bot.add_cog(boot(bot))
+    await bot.add_cog(bootFunctions(bot))

@@ -1,6 +1,6 @@
 import logging, discord, emoji, json
 from discord.ext import commands
-from discord import app_commands, role
+from discord import app_commands
 
 EMOJIS = emoji.EMOJI_DATA
 
@@ -42,10 +42,10 @@ class MentionReactor(commands.Cog):
         await self.bot.process_commands(message)
 
     # COMMANDS -----------------
+    
+    reaction_group = app_commands.Group(name="reaction", description="Mention to reactions commands.")
 
-    admin_group = app_commands.Group(name="admin", description="Admin commands.")
-
-    @admin_group.command(name="list_mentionroles", description="List roles that can use /set mentionemoji")
+    @reaction_group.command(name="list_roles", description="List roles that can use /set mentionemoji")
     @app_commands.checks.has_permissions(administrator=True)
     async def list_mentionroles(self, interaction: discord.Interaction):
         if interaction.guild is None:
@@ -66,7 +66,7 @@ class MentionReactor(commands.Cog):
         await interaction.response.send_message(listed_roles, ephemeral=True)
         return
     
-    @admin_group.command(name="add_mentionroles", description="Add roles that can use /set mentionemoji")
+    @reaction_group.command(name="add_roles", description="Add roles that can use /set mentionemoji")
     @app_commands.describe(role="The role you want to add.")
     @app_commands.checks.has_permissions(administrator=True)
     async def add_mentionroles(self, interaction: discord.Interaction, role: str):
@@ -112,7 +112,7 @@ class MentionReactor(commands.Cog):
         else:
             return "is already present."
 
-    @admin_group.command(name="remove_mentionroles", description="Remove roles that can use /set mentionemoji")
+    @reaction_group.command(name="remove_role", description="Remove roles that can use /set mentionemoji")
     @app_commands.describe(role="The role you want to remove.")
     @app_commands.checks.has_permissions(administrator=True)
     async def remove_mentionroles(self, interaction: discord.Interaction, role: str):
@@ -158,9 +158,7 @@ class MentionReactor(commands.Cog):
             return "is not present."
 
 
-    set_group = app_commands.Group(name="set", description="Set commands.")
-
-    @set_group.command(name="mentionemoji", description="Set a reaction emoji on your mentions. Type 'None' to remove it.")
+    @reaction_group.command(name="set_emoji", description="Set a reaction emoji on your mentions. Type 'None' to remove it.")
     @app_commands.describe(emoji="The emoji you want to set.")
     async def mentionemoji(self, interaction: discord.Interaction, emoji: str):
         

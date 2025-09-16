@@ -1,9 +1,5 @@
-import os
-import logging
+import os, logging, discord, asyncio
 from dotenv import load_dotenv
-import asyncio
-
-import discord
 from discord.ext import commands
 
 load_dotenv()
@@ -35,14 +31,16 @@ bot = commands.Bot(command_prefix='cm.', intents=intents)
 
 async def load_cogs():
     for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
+        if filename.endswith('cog.py'):
             await bot.load_extension(f'cogs.{filename[:-3]}')
 
 async def main():
-    await load_cogs()
     if token is None:
         raise ValueError("Token is not set.")
-    await bot.start(token)
+    await bot.login(token)
+    await load_cogs()
     await bot.tree.sync()
+    await bot.connect()
+
 
 asyncio.run(main())
