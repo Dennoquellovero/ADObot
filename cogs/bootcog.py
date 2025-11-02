@@ -1,5 +1,7 @@
-import logging, json
+import logging, json, sqlite3
 from discord.ext import commands
+
+
 
 logger=logging.getLogger(__name__)
 
@@ -20,6 +22,8 @@ class bootFunctions(commands.Cog):
     async def on_ready(self):        
 
         self.settings_handler()
+
+#        self.database_handler()
 
         logger.info("Bot has started up!!")
 
@@ -44,6 +48,33 @@ class bootFunctions(commands.Cog):
             
             with open(path, "w") as f:
                 json.dump(data, f, indent=4)
+
+    def database_handler(self):
+        
+        dbConnection = sqlite3.connect("dbAdobot.db")
+        c = dbConnection.cursor()
+
+        ### GIVEAWAYS TABLE
+        c.execute("""CREATE TABLE IF NOT EXISTS giveaways (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            guild_id INTEGER,
+            channel_id INTEGER,
+            message_id INTEGER,
+            prize TEXT,
+            host_id INTEGER,
+            end_time INTEGER,
+            winners_count,
+            ended INTEGER )
+        """)
+
+        ### PARTECIPANTS TABLE
+        c.execute("""CREATE TABLE IF NOT EXISTS participants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            giveaway_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            FOREIGN KEY (giveaway_id) REFERENCES giveaways (id))
+        """)
+
 
 async def setup(bot):
     await bot.add_cog(bootFunctions(bot))

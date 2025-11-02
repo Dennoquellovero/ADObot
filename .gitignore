@@ -208,4 +208,5 @@ __marimo__/
 
 
 discord.log
-serverSettings/*
+!serverSettings/*
+dbAdobot.db

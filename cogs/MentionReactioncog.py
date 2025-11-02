@@ -157,7 +157,6 @@ class MentionReactor(commands.Cog):
         else:
             return "is not present."
 
-
     @reaction_group.command(name="set_emoji", description="Set a reaction emoji on your mentions. Type 'None' to remove it.")
     @app_commands.describe(emoji="The emoji you want to set.")
     async def mentionemoji(self, interaction: discord.Interaction, emoji: str):
